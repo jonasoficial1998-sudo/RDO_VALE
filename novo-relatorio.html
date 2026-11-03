@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head><script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Novo Relatório</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f4f6f9;
+padding:15px;
+}
+
+.header{
+background:#006341;
+color:white;
+padding:20px;
+border-radius:15px;
+margin-bottom:15px;
+}
+
+.formulario{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+label{
+display:block;
+margin-top:12px;
+margin-bottom:5px;
+font-weight:bold;
+}
+
+input,
+select,
+textarea{
+
+width:100%;
+
+padding:12px;
+
+border:1px solid #ccc;
+
+border-radius:10px;
+}
+
+textarea{
+height:100px;
+resize:none;
+}
+
+button{
+
+width:100%;
+
+padding:15px;
+
+margin-top:20px;
+
+background:#006341;
+
+color:white;
+
+border:none;
+
+border-radius:10px;
+
+font-size:16px;
+
+font-weight:bold;
+}
+
+.secao{
+margin-top:20px;
+padding-top:15px;
+border-top:1px solid #ddd;
+}
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<h2>📝 Novo Relatório</h2>
+
+<p>RDO - Relatório Diário de Obra</p>
+
+</div>
+
+<div class="formulario">
+
+<label>Data</label>
+<input type="date">
+
+<label>OM / OS</label>
+<input type="text" placeholder="Digite a OM ou OS">
+
+<label>Tipo de Manutenção</label>
+
+
+<label>Local</label>
+<input type="text" placeholder="Local da atividade">
+
+<label>Coordenador</label>
+<input type="text">
+
+<label>Equipe</label>
+
+<textarea
+id="equipe"
+placeholder="Ex:
+
+João Silva
+Carlos Souza
+Pedro Santos
+Maria Oliveira"
+></textarea>
+
+
+<label>Hora Inicial</label>
+<input type="time">
+
+<label>Hora Final</label>
+<input type="time">
+
+<div class="secao">
+
+<label>Descrição da Atividade</label>
+
+<textarea
+placeholder="Descreva os serviços executados">
+</textarea>
+
+</div>
+
+<div class="secao">
+
+
+<textarea
+placeholder="Materiais utilizados">
+</textarea>
+
+</div>
+
+<div class="secao">
+
+<label>Observações</label>
+
+<textarea
+placeholder="Observações gerais">
+</textarea>
+
+</div>
+
+<div class="secao">
+
+<label>📸 Evidências Fotográficas</label>
+
+<label for="fotos" class="botao-upload">
+📂 Selecionar Fotos da Galeria
+</label>
+
+<input
+id="fotos"
+type="file"
+accept="image/*"
+multiple
+style="display:none;">
+
+
+
+</div>
+
+<div class="secao">
+
+<label>🎥 Evidências em Vídeo</label>
+
+<label for="videos" class="botao-upload">
+🎬 Selecionar Vídeos da Galeria
+</label>
+
+<input
+id="videos"
+type="file"
+accept="video/*"
+multiple
+style="display:none;">
+
+
+
+
+</div>
+</div>
+
+<div class="secao">
+
+</div>
+
+<button onclick="salvarRelatorio()">
+💾 Salvar Relatório
+</button>
+
+<button onclick="gerarPDF()">
+📄 Gerar PDF
+</button>
+
+</div>
+<script>
+
+function salvarRelatorio(){
+
+const relatorio = {
+
+data:
+document.getElementById("data").value,
+
+om:
+document.getElementById("om").value,
+
+local:
+document.getElementById("local").value,
+
+coordenador:
+document.getElementById("coordenador").value,
+
+equipe:
+document.getElementById("equipe").value,
+
+atividade:
+document.getElementById("atividade").value,
+
+materiais:
+document.getElementById("materiais").value,
+
+observacoes:
+document.getElementById("observacoes").value,
+
+dataCriacao:
+new Date().toLocaleString()
+
+};
+
+let relatorios =
+JSON.parse(
+localStorage.getItem("relatorios")
+) || [];
+
+relatorios.push(relatorio);
+
+localStorage.setItem(
+"relatorios",
+JSON.stringify(relatorios)
+);
+
+alert(
+"Relatório salvo com sucesso!"
+);
+
+}
+
+</script>
+<script>
+
+document.getElementById("fotos")
+.addEventListener("change", function(){
+
+const preview =
+document.getElementById("previewFotos");
+
+preview.innerHTML = "";
+
+Array.from(this.files)
+.forEach(file => {
+
+const img =
+document.createElement("img");
+
+img.src =
+URL.createObjectURL(file);
+
+img.className =
+"preview-img";
+
+preview.appendChild(img);
+
+});
+
+});
+
+document.getElementById("videos")
+.addEventListener("change", function(){
+
+const preview =
+document.getElementById("previewVideos");
+
+preview.innerHTML = "";
+
+Array.from(this.files)
+.forEach(file => {
+
+const video =
+document.createElement("video");
+
+video.src =
+URL.createObjectURL(file);
+
+video.controls = true;
+
+video.className =
+"preview-video";
+
+preview.appendChild(video);
+
+});
+
+});
+
+</script>
+<script>
+
+async function gerarPDF(){
+
+const { jsPDF } = window.jspdf;
+
+const doc = new jsPDF();
+
+let y = 20;
+
+doc.setFontSize(18);
+doc.text("RELATÓRIO DIÁRIO DE OBRA",20,y);
+
+y += 15;
+
+doc.setFontSize(12);
+
+doc.text(
+"Data: " +
+document.getElementById("data").value,
+20,y);
+
+y += 10;
+
+doc.text(
+"OM/OS: " +
+document.getElementById("om").value,
+20,y);
+
+y += 10;
+
+doc.text(
+"Local: " +
+document.getElementById("local").value,
+20,y);
+
+y += 10;
+
+doc.text(
+"Coordenador: " +
+document.getElementById("coordenador").value,
+20,y);
+
+y += 10;
+
+doc.text(
+"Equipe: " +
+document.getElementById("equipe").value,
+20,y);
+
+y += 15;
+
+doc.text(
+"Atividades:",
+20,y
+);
+
+y += 10;
+
+doc.text(
+document.getElementById("atividade").value,
+20,
+y
+);
+
+y += 20;
+
+doc.text(
+"Materiais:",
+20,y
+);
+
+y += 10;
+
+doc.text(
+document.getElementById("materiais").value,
+20,
+y
+);
+
+y += 20;
+
+doc.text(
+"Observações:",
+20,y
+);
+
+y += 10;
+
+doc.text(
+document.getElementById("observacoes").value,
+20,
+y
+);
+
+doc.save(
+"RDO.pdf"
+);
+
+}
+
+</script>
+<script>
+
+function gerarPDF(){
+
+alert("Botão PDF funcionando!");
+
+}
+
+</script>
+<script>
+
+function salvarRelatorio(){
+
+alert("Salvar funcionando!");
+
+}
+
+</script>
+
+</body>
+
+</html>

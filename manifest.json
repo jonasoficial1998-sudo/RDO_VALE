@@ -1,0 +1,8 @@
+{
+"name":"RDO VALE",
+"short_name":"RDO",
+"display":"standalone",
+"start_url":"index.html",
+"background_color":"#006341",
+"theme_color":"#006341"
+}

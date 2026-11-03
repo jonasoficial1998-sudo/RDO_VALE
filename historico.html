@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Histórico</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f4f6f9;
+padding:15px;
+}
+
+.topo{
+
+background:#006341;
+color:white;
+
+padding:20px;
+
+border-radius:15px;
+
+margin-bottom:20px;
+
+}
+
+.topo h1{
+font-size:30px;
+}
+
+.card{
+
+background:white;
+
+padding:15px;
+
+margin-bottom:15px;
+
+border-radius:15px;
+
+box-shadow:0 2px 8px rgba(0,0,0,.1);
+
+}
+
+.card h3{
+
+color:#006341;
+
+margin-bottom:10px;
+
+}
+
+.botao{
+
+background:#006341;
+
+color:white;
+
+border:none;
+
+padding:10px;
+
+border-radius:10px;
+
+margin-top:10px;
+
+width:100%;
+
+}
+
+.sem-registro{
+
+text-align:center;
+
+padding:50px;
+
+color:#777;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="topo">
+
+<h1>📚 Histórico</h1>
+
+<p>Relatórios Salvos</p>
+
+</div>
+<input
+type="text"
+id="pesquisa"
+placeholder="Pesquisar por OM, Local ou Coordenador"
+onkeyup="filtrar()"
+style="
+width:100%;
+padding:15px;
+margin-bottom:15px;
+border-radius:10px;
+border:1px solid #ccc;
+">
+
+<div id="lista"></div>
+
+<script>
+
+let relatorios =
+
+JSON.parse(
+localStorage.getItem("relatorios")
+) || [];
+
+let lista =
+document.getElementById("lista");
+
+if(relatorios.length === 0){
+
+lista.innerHTML = `
+
+<div class="sem-registro">
+
+📂 Nenhum relatório encontrado
+
+</div>
+
+`;
+
+}else{
+
+relatorios.reverse().forEach((r,index)=>{
+
+lista.innerHTML += `
+
+<div class="card">
+
+<h3>RDO ${relatorios.length-index}</h3>
+
+<p><b>Data:</b> ${r.data || ""}</p>
+
+<p><b>OM/OS:</b> ${r.om || ""}</p>
+
+<p><b>Local:</b> ${r.local || ""}</p>
+
+<p><b>Coordenador:</b>
+${r.coordenador || ""}
+</p>
+
+<button
+class="botao"
+onclick='abrir(${index})'>
+
+Visualizar Relatório
+
+<button
+class="botao-excluir"
+onclick='excluir(${index})'>
+
+🗑 Excluir Relatório
+
+<button
+class="botao-excluir"
+onclick='excluir(${index})'>
+
+🗑 Excluir
+
+</button>
+
+</div>
+
+`;
+
+});
+
+}
+
+function abrir(indice){
+function excluir(indice){
+
+let resposta = confirm(
+"Deseja excluir este relatório?"
+);
+
+if(resposta){
+
+relatorios.splice(indice,1);
+
+localStorage.setItem(
+"relatorios",
+JSON.stringify(relatorios)
+);
+
+alert(
+"Relatório excluído com sucesso!"
+);
+
+location.reload();
+
+}
+
+}
+
+alert(
+"Visualização completa será adicionada na próxima etapa."
+);
+
+}
+
+</script>
+
+</body>
+
+</html>
